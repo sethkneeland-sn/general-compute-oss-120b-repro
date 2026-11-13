@@ -1,10 +1,5 @@
 # General Compute GPT-OSS 120B AI SDK Tool-Call Repro
 
-> **Workaround available:** see [`workaround/`](workaround/README.md) for the
-> root cause (with sources), why lowering temperature is not a reliable fix, and
-> a validated workaround — declaring the routing helpers as real function tools
-> — plus a runnable, dependency-free demo (`workaround/tools-mode-demo.mjs`).
-
 ## Hosted Repro
 
 Worker: https://gc-oss120b-repro-20260628-0012.zshannon.workers.dev

@@ -336,7 +336,7 @@ function productionRoutingSystemPrompt(prompt: string): string {
 You are the routing agent for Flick. Choose the required tool calls, in order,
 until the user's request is satisfied.
 
-Execute the required tool calls in a single program.
+Make the required routing calls in a single program passed to the exec tool.
 
 ## Scope
 
@@ -426,7 +426,7 @@ The tool saves the data as an artifact that \`codingAgentTool\` can import.
 
 ## Execution
 
-Write a single program that executes all required routing steps in order.
+Call exec once with a single program that executes all required routing steps in order.
 Check ROUTING POLICY before choosing tools.
 
 For straightforward requests, call \`finalize("Created your app!")\` at the
@@ -438,117 +438,10 @@ end to skip review. Use a brief, friendly message describing what you built.
 - DO NOT loop or ignore successful results.
 - DO NOT skip \`defineMetadataTool\` before metadata exists.
 
-# CURRENT STATE
+# CODE-MODE API
 
-## APP METADATA
+Call the exec tool exactly once. Its code argument holds a single TypeScript program. The functions below are async globals inside that program. They are not tools, so call them only from inside the program.
 
-**No metadata exists.**
-
-## GENERATED CODE
-
-**No code generated yet.**
-
-## COLOR PALETTE
-
-**No color palette set.**
-
-## QUANTUM STORES
-
-**No stores defined yet.**
-
-## WORLD KNOWLEDGE
-
-**No world knowledge gathered yet.**
-
-## INVOICE
-
-**No invoice generated yet.**
-
-# REQUEST CONTEXT
-
-## CURRENT TURN
-
-In an App Store search style interface, the user input:
-
-${prompt}
-
-The user did not select a suggestion. Generate the most obvious, normal, tightly scoped first result for this search input.
-
-Example expansions:
-
-- "bingo card maker" -> a bingo card maker for creating and playing custom bingo boards
-- "tip calculator" -> a simple bill tip calculator with totals people can use immediately
-- "baby chores" -> a baby chores tracker for logging feedings, diapers, naps, and whose turn is next
-- "packing list" -> a packing list builder for trips with checkable items
-- "shot tracker" -> a basketball shot tracker for makes, misses, and quick shooting stats
-
-## codingAgentTool Task String
-
-For this new app, expand the App Store search input from CURRENT TURN into the obvious first-result app request. The task should be short, normal, and complete enough for the coding agent to build the flick. Do not pass an ambiguous bare keyword; use a small expansion for clarity. Do not mention frameworks, UI structure, storage mechanics, or extra features beyond the normal first result.
-
-Examples:
-
-- "bingo card maker" -> \`{ "prompt": "Create a bingo card maker for making and playing custom bingo cards" }\`
-- "tip calculator" -> \`{ "prompt": "Build a simple tip calculator for splitting a bill and tip" }\`
-- "baby chores" -> \`{ "prompt": "Create a baby chores tracker for feedings, diapers, naps, and turns" }\`
-- "packing list" -> \`{ "prompt": "Create a packing list builder with checkable trip items" }\`
-- "shot tracker" -> \`{ "prompt": "Create a basketball shot tracker for makes, misses, and quick shooting stats" }\``
-}
-
-function productionCodeModeDescription(): string {
-  return `## Purpose
-
-This tool exists to batch multiple operations into a single execution. Instead of making separate tool calls, write one program that performs all the steps you need in sequence.
-
-## Usage
-
-Write TypeScript code that:
-
-1. Calls multiple functions in the correct order
-2. Uses async/await for all function calls
-3. Can use loops, conditionals, and data transformations
-4. Uses \`return\` to return the final result
-
-Your code runs directly in an async context — write bare executable statements, not function definitions.
-
-Write a single program in functions namespace.
-
-## Finalize
-
-You can optionally call \`finalize(message)\` to end this codemode call without routing the result back for further review. \`message\` is a brief, friendly note shown to the user.
-
-Use \`finalize()\` when the request is straightforward and you don't need to inspect any tool results before deciding what to do next. Skip \`finalize()\` when you need to read a tool's return value before proceeding.
-
-### Finalize examples
-
-Straightforward request, no need to inspect intermediate results:
-
-\`\`\`typescript
-await defineMetadataTool({ name: "Fortune Cookie", emoji: "🥠", description: "Shows random fortunes" });
-await codingAgentTool({ prompt: "Create an app that displays random fortune cookie messages with a button to get a new one" });
-await finalize("Mmm enjoy your digital fortune cookies :)");
-\`\`\`
-
-Need to read a tool result before deciding next steps — skip \`finalize()\`:
-
-\`\`\`typescript
-const knowledge = await worldKnowledgeAgentTool({ prompt: "best pizza in NYC" });
-// Inspect knowledge, then decide whether to proceed with code generation
-\`\`\`
-
-## Available Tools
-
-- defineMetadataTool: Defining app
-- codingAgentTool: Running coding agent
-- designAgentTool: Running design agent
-- pricingAgentTool: Running pricing agent
-- schemaAgentTool: Running schema agent
-- worldKnowledgeAgentTool: Running world-knowledge agent
-- finalize: Finalizing
-
-## TypeScript API
-
-\`\`\`typescript
 declare function defineMetadataTool(input: {
   name: string;
   emoji: string;
@@ -608,7 +501,66 @@ declare function finalize(input: string): Promise<{
   finalized: boolean;
   message: string;
 }>;
-\`\`\``
+
+# CURRENT STATE
+
+## APP METADATA
+
+**No metadata exists.**
+
+## GENERATED CODE
+
+**No code generated yet.**
+
+## COLOR PALETTE
+
+**No color palette set.**
+
+## QUANTUM STORES
+
+**No stores defined yet.**
+
+## WORLD KNOWLEDGE
+
+**No world knowledge gathered yet.**
+
+## INVOICE
+
+**No invoice generated yet.**
+
+# REQUEST CONTEXT
+
+## CURRENT TURN
+
+In an App Store search style interface, the user input:
+
+${prompt}
+
+The user did not select a suggestion. Generate the most obvious, normal, tightly scoped first result for this search input.
+
+Example expansions:
+
+- "bingo card maker" -> a bingo card maker for creating and playing custom bingo boards
+- "tip calculator" -> a simple bill tip calculator with totals people can use immediately
+- "baby chores" -> a baby chores tracker for logging feedings, diapers, naps, and whose turn is next
+- "packing list" -> a packing list builder for trips with checkable items
+- "shot tracker" -> a basketball shot tracker for makes, misses, and quick shooting stats
+
+## codingAgentTool Task String
+
+For this new app, expand the App Store search input from CURRENT TURN into the obvious first-result app request. The task should be short, normal, and complete enough for the coding agent to build the flick. Do not pass an ambiguous bare keyword; use a small expansion for clarity. Do not mention frameworks, UI structure, storage mechanics, or extra features beyond the normal first result.
+
+Examples:
+
+- "bingo card maker" -> \`{ "prompt": "Create a bingo card maker for making and playing custom bingo cards" }\`
+- "tip calculator" -> \`{ "prompt": "Build a simple tip calculator for splitting a bill and tip" }\`
+- "baby chores" -> \`{ "prompt": "Create a baby chores tracker for feedings, diapers, naps, and turns" }\`
+- "packing list" -> \`{ "prompt": "Create a packing list builder with checkable trip items" }\`
+- "shot tracker" -> \`{ "prompt": "Create a basketball shot tracker for makes, misses, and quick shooting stats" }\``
+}
+
+function productionCodeModeDescription(): string {
+  return `Runs one TypeScript program that makes all the required routing calls in order. Put the whole program in the code argument as a JSON string. Inside that string, write each line break as \\n, and do not end a line with a backslash. Write bare statements with top-level await. Do not define functions. Call finalize(message) as the last statement when you do not need to inspect any result. The routing functions the program can call are listed under CODE-MODE API in the instructions.`
 }
 
 function renderPage(options: {
